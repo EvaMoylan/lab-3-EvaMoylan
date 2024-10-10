@@ -72,25 +72,6 @@ Please don't do either of those things.
 -   The first chunk of this Quarto document should be used to *declare your libraries* (probably only `tidyverse` for now).
 -   The second chunk of your Quarto document should be to *load in your data*.
 
-```{r}
-#| label: set-up
-#| warning: false
-#| output: false
-
-#Load packages
-library(tidyverse)
-library(here)
-library(dplyr)
-
-#Load in data
-evals <- read_csv(here("data","teacher_evals.csv"))
-
-#Preview data, did it load correctly?
-glimpse(evals)
-
-```
-
-
 ## Save Regularly, Render Often
 
 -   Be sure to **save** your work regularly.
@@ -168,7 +149,13 @@ included in the `teacher_evals_codebook.pdf` inside the "resources" folder.
 
 ```{r}
 #| label: setup
-# code chunk for loading packages
+#| warning: false
+#| output: false
+
+#Load packages
+library(tidyverse)
+library(here)
+library(dplyr)
 
 ```
 
@@ -179,6 +166,9 @@ included in the `teacher_evals_codebook.pdf` inside the "resources" folder.
 #| label: load-data
 # code chunk for importing the data
 
+#Load in data
+evals <- read_csv(here("data","teacher_evals.csv"))
+
 ```
 
 ### Data Inspection + Summary
@@ -187,9 +177,12 @@ included in the `teacher_evals_codebook.pdf` inside the "resources" folder.
 
 ```{r}
 #| label: explore-data
-# you may want to use code to answer this question
 
+#Look at all the columns in the dataset
+glimpse(evals)
 ```
+
+*These data are *
 
 **4. What is the unit of observation (i.e. a single row in the dataset) identified by?**
 
@@ -197,7 +190,9 @@ included in the `teacher_evals_codebook.pdf` inside the "resources" folder.
 #| label: row-identification
 # you may want to use code to answer this question
 
+head(evals)
 ```
+*Each row represents an entry by a specific student for a question on the evaluation survey for a specific course and teacher. So, there are multiple entries by the same students in the dataset, but each entry is a response to a different question* 
 
 **5. Use _one_ `dplyr` pipeline to clean the data by:**
 
@@ -210,7 +205,14 @@ included in the `teacher_evals_codebook.pdf` inside the "resources" folder.
 
 ```{r}
 #| label: data-cleaning
-# code chunk for Q4
+# code chunk for Q5
+
+evals |>
+  rename(sex = gender) |> #rename gender column to 'sex'
+  filter(no_participants >= 10) |> # remove all courses with fewer than 10 respondents
+  mutate(teacher_id = as.character(teacher_id), #change to a character
+         seniority = as.character(seniority), #change to a character
+         question_no = question_no-900) #change question number to 1-10
 
 ```
 
@@ -218,7 +220,7 @@ included in the `teacher_evals_codebook.pdf` inside the "resources" folder.
 
 ```{r}
 #| label: unique-courses
-# code chunk for Q5
+# code chunk for Q6
 
 ```
 
@@ -226,7 +228,7 @@ included in the `teacher_evals_codebook.pdf` inside the "resources" folder.
 
 ```{r}
 #| label: uncovering-missing-values
-# code chunk for Q6
+# code chunk for Q7
 
 ```
 
@@ -234,7 +236,7 @@ included in the `teacher_evals_codebook.pdf` inside the "resources" folder.
 
 ```{r}
 #| label: exploring-demographics-of-instructors
-# code chunk for Q7
+# code chunk for Q8
 
 ```
 
@@ -242,7 +244,7 @@ included in the `teacher_evals_codebook.pdf` inside the "resources" folder.
 
 ```{r}
 #| label: teacher-course-asked-every-question
-# code chunk for Q8
+# code chunk for Q9
 
 ```
 
@@ -252,7 +254,7 @@ included in the `teacher_evals_codebook.pdf` inside the "resources" folder.
 
 ```{r}
 #| label: question-1-high-low
-# code chunk for Q9
+# code chunk for Q10
 
 ```
 
