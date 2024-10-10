@@ -207,12 +207,15 @@ head(evals)
 #| label: data-cleaning
 # code chunk for Q5
 
-evals |>
+teacher_evals_clean <- evals |>
   rename(sex = gender) |> #rename gender column to 'sex'
   filter(no_participants >= 10) |> # remove all courses with fewer than 10 respondents
   mutate(teacher_id = as.character(teacher_id), #change to a character
          seniority = as.character(seniority), #change to a character
-         question_no = question_no-900) #change question number to 1-10
+         question_no = question_no-900) |> #change question number to 1-10
+  select(-(stud_grade_avg:stud_grade_var_coef_cur),
+         -(class_duration:maximum_score)) #remove rows we don't need
+
 
 ```
 
