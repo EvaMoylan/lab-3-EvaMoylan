@@ -210,13 +210,13 @@ head(evals)
 teacher_evals_clean <- evals |>
   rename(sex = gender) |> #rename gender column to 'sex'
   filter(no_participants >= 10) |> # remove all courses with fewer than 10 respondents
-  mutate(teacher_id = as.character(teacher_id), #change to a character
-         seniority = as.character(seniority), #change to a character
+  mutate(teacher_id = as.factor(teacher_id), #change to a character
+         seniority = as.factor(seniority), #change to a character
          question_no = question_no-900) |> #change question number to 1-10
   select(-(stud_grade_avg:stud_grade_var_coef_cur),
          -(class_duration:maximum_score)) #remove rows we don't need
 
-
+print(teacher_evals_clean)
 ```
 
 **6. How many unique instructors and unique courses are present in the cleaned dataset?**
@@ -224,6 +224,14 @@ teacher_evals_clean <- evals |>
 ```{r}
 #| label: unique-courses
 # code chunk for Q6
+
+teacher_evals_clean |>
+  distinct(course_id) |> #Only keep distinct values
+  nrow() #How many course ids? 939
+
+teacher_evals_clean |>
+  distinct(teacher_id) |> #Only keep distinct values
+  nrow() #How many teacher ids? 297
 
 ```
 
@@ -233,6 +241,19 @@ teacher_evals_clean <- evals |>
 #| label: uncovering-missing-values
 # code chunk for Q7
 
+teacher_evals_clean |>
+  group_by(teacher_id, course_id) |> 
+  summarize(
+    across(.col = question_no:sex, #summarize across these columns...
+           .fns = ~sum(is.na(.x))), #for these 'x' entries, keep if NA
+    .groups = "drop" #un-group
+    ) |> 
+  filter(
+    if_any(.col = question_no:sex,
+           .fns = ~.x != 0) #if any entries in these columns are not equal to 0, keep that row
+  )
+
+
 ```
 
 **8. What are the demographics of the instructors in this study? Investigate the variables `academic_degree`, `seniority`, and `sex` and summarize your findings in ~3 complete sentences.**
@@ -241,6 +262,19 @@ teacher_evals_clean <- evals |>
 #| label: exploring-demographics-of-instructors
 # code chunk for Q8
 
+#Unique values for academic degree
+teacher_evals_clean |>
+  count(academic_degree, sort = TRUE)
+
+#Unique values for seniority
+teacher_evals_clean |>
+  count(seniority, sort = TRUE)
+
+#Unique values for sex
+teacher_evals_clean |>
+  count(sex, sort = TRUE)
+
+
 ```
 
 **9. Each course seems to have used a different subset of the nine evaluation questions. How many teacher-course combinations asked all nine questions?**
@@ -248,6 +282,14 @@ teacher_evals_clean <- evals |>
 ```{r}
 #| label: teacher-course-asked-every-question
 # code chunk for Q9
+
+#Which teacher-class combinations answered all 9 questions?
+teacher_evals_clean |>
+  group_by(teacher_id, course_id) |>
+  filter(question_no %in% (1:9))
+
+ 
+  
 
 ```
 
@@ -259,13 +301,29 @@ teacher_evals_clean <- evals |>
 #| label: question-1-high-low
 # code chunk for Q10
 
+#Teachers with the highest average rating for Q1
+teacher_evals_clean |>
+  filter(question_no == 1) |> #Keep only question 1
+  group_by(teacher_id) |>
+  mutate(avg_1_score = mean(SET_score_avg)) |> #New column with the average Q1 score for each teacher
+  distinct(avg_1_score) |>
+  arrange(desc(avg_1_score)) #Arrange by top average scores
+
+#Teachers with the lowest average rating for Q1
+teacher_evals_clean |>
+  filter(question_no == 1) |> #Keep only question 1
+  group_by(teacher_id) |>
+  mutate(avg_1_score = mean(SET_score_avg)) |> #New column with the average Q1 score for each teacher
+  distinct(avg_1_score) |>
+  arrange(avg_1_score) #Arrange by top average scores
+ 
 ```
 
 **11. Which instructors with one year of experience had the highest and lowest average percentage of students failing in the current semester across all their courses?**
 
 ```{r}
 #| label: one-year-experience-failing-students
-# code chunk for Q10
+# code chunk for Q11
 
 ```
 
