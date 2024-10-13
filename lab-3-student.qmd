@@ -1,7 +1,7 @@
 ---
 title: "Lab 3: Student Evaluations of Teaching"
 author: "Eva Moylan"
-date: "10/10/24"
+date: "10/13/24"
 format: 
   html:  
     embed-resources: true
@@ -182,7 +182,7 @@ evals <- read_csv(here("data","teacher_evals.csv"))
 glimpse(evals)
 ```
 
-*These data are *
+*There are 8,015 rows and 22 columns in this dataset. Each row represents response of students to a single question on the evaluation survey for a specific course and teacher combination. Each column represents attributes of the quiz submission, such as information about the instructor, student scores, average SET score, number of participants etc. The columns are originally formatted as either double or characters.*
 
 **4. What is the unit of observation (i.e. a single row in the dataset) identified by?**
 
@@ -192,7 +192,7 @@ glimpse(evals)
 
 head(evals)
 ```
-*Each row represents an entry by a specific student for a question on the evaluation survey for a specific course and teacher. So, there are multiple entries by the same students in the dataset, but each entry is a response to a different question* 
+*Each row represents response of students to a single question on the evaluation survey for a specific course and teacher combination. So, there are multiple entries for the same class/teacher in dataset, but they contain data on responses to different questions.* 
 
 **5. Use _one_ `dplyr` pipeline to clean the data by:**
 
@@ -234,6 +234,8 @@ teacher_evals_clean |>
   nrow() #How many teacher ids? 297
 
 ```
+*There are 939 unique courses and 297 unique instructors*
+
 
 **7. One teacher-course combination has some missing values, coded as `NA`. Which instructor has these missing values? Which course? What variable are the missing values in?**
 
@@ -255,6 +257,7 @@ teacher_evals_clean |>
 
 
 ```
+*The course/instructor combination with missing data has the teacher ID 56347 and course ID PAB3SE004PA.*
 
 **8. What are the demographics of the instructors in this study? Investigate the variables `academic_degree`, `seniority`, and `sex` and summarize your findings in ~3 complete sentences.**
 
@@ -276,6 +279,8 @@ teacher_evals_clean |>
 
 
 ```
+*Doctorate, master's, professor and no degree are the 4 degree categories in this dataset. Seniority of instructors ranges from 1 to 11 years, and all instructors are categorized as either male or female.*
+
 
 **9. Each course seems to have used a different subset of the nine evaluation questions. How many teacher-course combinations asked all nine questions?**
 
@@ -286,11 +291,8 @@ teacher_evals_clean |>
 #Which teacher-class combinations answered all 9 questions?
 teacher_evals_clean |>
   group_by(teacher_id, course_id) |>
-  filter(question_no %in% (1:9))
-
- 
-  
-
+  summarize(question_no = n_distinct(question_no)) |>
+  filter(n() == 9) #Stuck on this
 ```
 
 ## Rate my Professor
@@ -318,6 +320,7 @@ teacher_evals_clean |>
   slice_min(SET_score_avg) #Instructors with lowest average score
  
 ```
+*80 different instructors tied for the highest average score (5) for question 1 and instructors 5401 and 100132 tied for the lowest average score of 1.*
 
 **11. Which instructors with one year of experience had the highest and lowest average percentage of students failing in the current semester across all their courses?**
 
@@ -342,6 +345,8 @@ teacher_evals_clean |>
   slice_min(percent_failed_cur)
 
 ```
+*Instructor 106692 had the highest average percent failure in their class with 68% failure, and 6 instructors tied for the lowest percent failure with 0%.*
+
 
 **12. Which female instructors with either a doctorate or professor degree had the highest and lowest average percent of students responding to the evaluation across all their courses?**
 
@@ -368,3 +373,5 @@ teacher_evals_clean |>
   slice_min(resp_share)
 
 ```
+*Instructor 101508 was the female instructor with the highest average response at 52.1% and instructor 59338 had the lowest average response at 1.4%.*
+
