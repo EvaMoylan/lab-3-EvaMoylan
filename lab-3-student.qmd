@@ -305,17 +305,17 @@ teacher_evals_clean |>
 teacher_evals_clean |>
   filter(question_no == 1) |> #Keep only question 1
   group_by(teacher_id) |>
-  mutate(avg_1_score = mean(SET_score_avg)) |> #New column with the average Q1 score for each teacher
-  distinct(avg_1_score) |>
-  arrange(desc(avg_1_score)) #Arrange by top average scores
+  summarise(SET_score_avg = mean(SET_score_avg), #Average Q1 score for each teacher
+            .groups = "drop") |>
+  slice_max(SET_score_avg) #Instructors with lowest average score
 
 #Teachers with the lowest average rating for Q1
 teacher_evals_clean |>
   filter(question_no == 1) |> #Keep only question 1
   group_by(teacher_id) |>
-  mutate(avg_1_score = mean(SET_score_avg)) |> #New column with the average Q1 score for each teacher
-  distinct(avg_1_score) |>
-  arrange(avg_1_score) #Arrange by top average scores
+  summarise(SET_score_avg = mean(SET_score_avg), #Average Q1 score for each teacher
+            .groups = "drop")|> #New column with the average Q1 score for each teacher
+  slice_min(SET_score_avg) #Instructors with lowest average score
  
 ```
 
@@ -325,6 +325,22 @@ teacher_evals_clean |>
 #| label: one-year-experience-failing-students
 # code chunk for Q11
 
+#Teacher with the highest average percent failure
+teacher_evals_clean |>
+  filter(seniority == 1) |> #Keep only instructors with 1 year of experience
+  group_by(teacher_id) |>
+  summarise(percent_failed_cur = mean(percent_failed_cur),
+            .groups = "drop") |>
+  slice_max(percent_failed_cur)
+
+#Teachers with the lowest average percent failure
+teacher_evals_clean |>
+  filter(seniority == 1) |> #Keep only instructors with 1 year of experience
+  group_by(teacher_id) |>
+  summarise(percent_failed_cur = mean(percent_failed_cur),
+            .groups = "drop") |>
+  slice_min(percent_failed_cur)
+
 ```
 
 **12. Which female instructors with either a doctorate or professor degree had the highest and lowest average percent of students responding to the evaluation across all their courses?**
@@ -332,5 +348,23 @@ teacher_evals_clean |>
 ```{r}
 #| label: female-instructor-student-response
 # code chunk for Q11
+
+#Teacher ID with highest average percent responding to evaluation
+teacher_evals_clean |>
+  filter(sex == "female",
+         academic_degree == "dr" | academic_degree == "prof") |>
+  group_by(teacher_id) |>
+  summarise(resp_share = mean(resp_share),
+            .groups = "drop") |>
+  slice_max(resp_share)
+
+#Teacher ID with lowest average percent responding to evaluation
+teacher_evals_clean |>
+  filter(sex == "female",
+         academic_degree == "dr" | academic_degree == "prof") |>
+  group_by(teacher_id) |>
+  summarise(resp_share = mean(resp_share),
+            .groups = "drop") |>
+  slice_min(resp_share)
 
 ```
