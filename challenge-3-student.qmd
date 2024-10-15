@@ -36,7 +36,6 @@ glimpse(evals) #To have column names
 
 ```
 
-
 **1. Create a new dataset (`teacher_evals_compare`) that accomplishes the following with _one_ `dplyr` pipeline:**
 
 - **includes responses for Question 3 only**
@@ -119,8 +118,6 @@ chisq.test(evals_table) #output: p = 0.001
 ```
 
 **4. Draw a conclusion about the independence of evaluation level and seniority level based on your chi-square test.**
-*H0: SET level and instructor seniority are independent of each other*
-*H1: SET level and instructor seniority are not independent of each other*
 
 *SET level and instructor seniority are independently influential.*
 
@@ -134,4 +131,8 @@ teaching ([an example](https://link.springer.com/article/10.1007/s10755-014-9313
 
 **5. If you were to conduct this study at Cal Poly, what are two other variables you would like to collect that you think might be related to student evaluations? These should be course or instructor characteristics that were not collected in this study.**
 
+*If I were add 2 variables, I would include if the class was online or in-person, and also instructor race and/or ethnicity.*
+
 **6. Explain what effects / relationships you would expect to see for each of the two variables you outlined.**
+
+*If students have gender biases towards teachers, I would expect there might also be racial biases regardless of teaching effectiveness. Also, I think in-person classes might get higher rankings because it is difficult to engage with instructors and classes online for a lot of students.*
