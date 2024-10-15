@@ -1,5 +1,16 @@
 ---
 title: "Challenge 3: Extending Teaching Evaluation Investigations"
+author: "Eva Moylan"
+date: "10/14/24"
+format: 
+  html:  
+    embed-resources: true
+    code-tools: true
+editor: source
+execute: 
+  echo: true
+code-fold: true
+theme: sandstone
 ---
 
 # Chi-Square Test of Independence
@@ -7,6 +18,24 @@ title: "Challenge 3: Extending Teaching Evaluation Investigations"
 Let’s compare the level of SET ratings for Question 3 (The professor used
 activities to make the class more engaging.) between senior instructors and 
 junior instructors.
+
+```{r}
+#| label: setup
+#| warning: false
+#| output: false
+
+#Load packages
+library(tidyverse)
+library(here)
+library(dplyr)
+
+#Load in data
+evals <- read_csv(here("data","teacher_evals.csv"))
+
+glimpse(evals) #To have column names
+
+```
+
 
 **1. Create a new dataset (`teacher_evals_compare`) that accomplishes the following with _one_ `dplyr` pipeline:**
 
@@ -21,7 +50,19 @@ Helpful functions: `filter()`, `mutate()`, `if_else()`, `select()`
 
 ```{r}
 #| label: cleaning-data-for-junior-senior-comparison
-# code chunk for Q12
+#| warning: false
+
+teacher_evals_compare <- evals |>
+  mutate(SET_level = if_else(SET_score_avg >= 4, 
+                             "excellent", 
+                             "standard"),
+         sen_level = if_else(seniority <= 4, 
+                             "junior", 
+                             "senior")) |>
+  filter(question_no == 903) |>
+  select(course_id, SET_level, sen_level)
+
+teacher_evals_compare #Looks good! Data set shows course_id, categorized SET_level and sen_level for only question 3
 
 ```
 
