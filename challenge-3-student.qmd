@@ -50,7 +50,6 @@ Helpful functions: `filter()`, `mutate()`, `if_else()`, `select()`
 
 ```{r}
 #| label: cleaning-data-for-junior-senior-comparison
-#| warning: false
 
 teacher_evals_compare <- evals |>
   mutate(SET_level = if_else(SET_score_avg >= 4, 
@@ -70,7 +69,6 @@ teacher_evals_compare #Looks good! Data set shows course_id, categorized SET_lev
 
 ![](images/make_plot.png)
 
-
 ::: callout-tip
 Helpful geometric object and arguments: `geom_bar(stat = ..., position = ...)`
 
@@ -83,7 +81,21 @@ plot.
 
 ```{r}
 #| label: recreate-plot
-# code chunk for Q13
+
+#Re-create plot using filtered data set
+
+teacher_evals_compare |>
+  ggplot(mapping = aes(x = sen_level, #Don't need to specify y because we want y to be a count of the other aesthetics
+                       fill = SET_level)) +
+  geom_bar(stat = "count",
+           position = "stack") + #I added this because of the tip above, but is it bad practice to just have 'geom_bar( )' since these arguments are the default?
+  scale_fill_manual(values = c("steelblue",
+                               "orange3")) +
+  theme_bw() +
+  labs(x = "Seniority of Instructor",
+       y = NULL,
+       subtitle = "Number of Sections",
+       fill = "SET Level")
 
 ```
 
@@ -95,7 +107,7 @@ Note that the `chisq.test()` function does not take a formula / data specificati
 
 ```{r}
 #| label: chi-square-test
-# code chunk for Q14
+# Chi-squared test
 
 ```
 
